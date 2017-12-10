@@ -6,22 +6,22 @@ let _config = {
   locales: {}
 };
 
+const format = (str, args = []) => {
+  return util.format.apply(null, [ str, ...args ]);
+};
+
 const Text = props => {
-  const locale = props.locale || _config.defaultLocale;
   const key = props.children;
-  let translation;
-  if (!_config.locales.hasOwnProperty(locale)) {
+  const locale = props.locale || _config.defaultLocale;
+  if (props.locale && !_config.locales.hasOwnProperty(props.locale)) {
     throw new Error('No such locale.');
   }
   if (!_config.locales[locale].hasOwnProperty(key)) {
-    translation = key;
     console.warn('Warning: no direct translation in locale for entry. Returning the raw string.');
-  } else {
-    translation = _config.locales[locale][key] || key;
   }
-  translation = util.format.apply(null, [ translation, ...(props.args || []) ]);
+  const translation = _config.locales[locale][key] || key;
   return (
-    <span>{translation}</span>
+    <span>{format(translation, props.args)}</span>
   );
 };
 
